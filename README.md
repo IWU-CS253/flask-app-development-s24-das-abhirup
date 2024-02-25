@@ -1,7 +1,12 @@
-# Flask Example
+# Flaskr Plus Application
+Author: Abhirup Das
 
-An example Flask application (adapted from the [Flask 0.12 tutorial](https://www.iwu.edu/~mliffito/flask_tutorial/))
+Flaskr Plus Application as per the requirements of CS-253 Spring '24 assignment instructions.
+Application built on the starter code provided by Professor Mark Liffiton.
 
-## License
+# Application Description:
+Basic micro-blogging application where each post is categorised by the user. Users can also filter posts by category
+and have the ability to delete posts individually.
 
-The code from the tutorial is licensed as stated in the LICENSE file.
+# License
+The source code for this application is licensed as per the LICENSE file.

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-    Flaskr
+    Flaskr Plus
     ~~~~~~
+    A microblog example application written with Flask and sqlite3.
+    Author: Abhirup Das
+    Source-Code: Mark Liffiton and Armin Ronacher.
 
-    A microblog example application written as Flask tutorial with
-    Flask and sqlite3.
-
-    :copyright: (c) 2015 by Armin Ronacher.
-    :license: BSD, see LICENSE for more details.
+    Source-Code Copyright: (c) 2015 by Armin Ronacher.
+    License: BSD, see LICENSE for more details.
 """
 
 import os
@@ -68,7 +68,7 @@ def close_db(error):
 @app.route('/')
 def show_entries():
     db = get_db()
-    cur = db.execute('select title, text from entries order by id desc')
+    cur = db.execute('SELECT title, text, id, category FROM entries ORDER BY id DESC')
     entries = cur.fetchall()
     return render_template('show_entries.html', entries=entries)
 
@@ -76,8 +76,17 @@ def show_entries():
 @app.route('/add', methods=['POST'])
 def add_entry():
     db = get_db()
-    db.execute('insert into entries (title, text) values (?, ?)',
-               [request.form['title'], request.form['text']])
+    db.execute('insert into entries (title, text, category) values (?, ?, ?)',
+               [request.form['title'], request.form['text'], request.form['category']])
     db.commit()
     flash('New entry was successfully posted')
+    return redirect(url_for('show_entries'))
+
+
+@app.route('/delete', methods=['POST'])
+def del_entry():
+    db = get_db()
+    db.execute('DELETE FROM entries WHERE id = ?',[request.form.get('id')])
+    db.commit()
+    flash('New entry was successfully deleted')
     return redirect(url_for('show_entries'))
