@@ -90,3 +90,15 @@ def del_entry():
     db.commit()
     flash('New entry was successfully deleted')
     return redirect(url_for('show_entries'))
+
+@app.route('/filter_entires', methods=['GET'])
+def filter_entries():
+    db = get_db()
+    filter_category = request.args.get('category')
+    category = db.execute('SELECT DISTINCT category FROM entries').fetchall()
+    if filter_category == "all":
+        all_entries = db.execute('SELECT * FROM entries ORDER BY id DESC').fetchall()
+        return render_template('show_entries.html', entries=all_entries, category=category)
+    else:
+        entries = db.execute('SELECT * FROM entries WHERE category = ? ORDER BY id DESC', (filter_category,)).fetchall()
+        return render_template('show_entries.html', entries=entries, category=category)
