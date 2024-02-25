@@ -2,30 +2,38 @@
 
 {% block body %}
 
-  <form action="{{ url_for('add_entry') }}" method="post" class="add-entry">
-    <dl>
-        <dt>Title:
-        <dd><input type="text" size="30" name="title">
-        <dt>Category:
-        <dd><input tupe="text" size="50" name="category">
-        <dt>Text:
-        <dd><textarea name="text" rows="5" cols="40"></textarea>
-        <dd><input type="submit" value="Share">
-    </dl>
-  </form>
+<form action="{{ url_for('add_entry') }}" method="post" class="add-entry">
+<dl>
+<dt>Title:
+<dd><input type="text" size="30" name="title">
+<dt>Category:
+<dd><input tupe="text" size="50" name="category">
+<dt>Text:
+<dd><textarea name="text" rows="5" cols="40"></textarea>
+<dd><input type="submit" value="Share">
+</dl>
+</form>
 
-  <ul class="entries">
-      {% for entry in entries %}
-        <li> <h2> {{ entry.title }} </h2> {{ entry.text|safe }} {{ entry.category }}
-        <form action="{{ url_for('del_entry') }}" method="post" class="del_entry">
-            <button value="delete" type="submit"> Delete </button>
-            <input name="id" value="{{entry.id}}" type="hidden">
-        </form>
-        </li>
+<select id="categoryDropDown">
+<option value="all"> All Categories</option>
+<ul class="entries">
+{% for entry in entries %}
+    <option value="{{ entry.category }}"> {{ entry.category }}</option>
+{% endfor %}
+</ul>
+</select>
 
-      {% else %}
-        <li><em> Unbelievable. No entries here so far. </em></li>
-      {% endfor %}
-  </ul>
+<ul class="entries">
+{% for entry in entries %}
+<li> <h2> {{ entry.title }} </h2> {{ entry.category }} <br> {{ entry.text|safe }}
+<form action="{{ url_for('del_entry') }}" method="post" class="del_entry">
+<button value="delete" type="submit"> Delete </button>
+<input name="id" value="{{entry.id}}" type="hidden">
+</form>
+</li>
+{% else %}
+<li><em> Unbelievable. No entries here so far. </em></li>
+{% endfor %}
+</ul>
 
 {% endblock %}
