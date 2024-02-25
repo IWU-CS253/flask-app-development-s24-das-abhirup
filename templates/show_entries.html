@@ -4,17 +4,19 @@
 
   <form action="{{ url_for('add_entry') }}" method="post" class="add-entry">
     <dl>
-      <dt>Title:
-      <dd><input type="text" size="30" name="title">
-      <dt>Text:
-      <dd><textarea name="text" rows="5" cols="40"></textarea>
-      <dd><input type="submit" value="Share">
+        <dt>Title:
+        <dd><input type="text" size="30" name="title">
+        <dt>Category:
+        <dd><input tupe="text" size="50" name="category">
+        <dt>Text:
+        <dd><textarea name="text" rows="5" cols="40"></textarea>
+        <dd><input type="submit" value="Share">
     </dl>
   </form>
 
   <ul class="entries">
       {% for entry in entries %}
-        <li> <h2> {{ entry.title }} </h2> {{ entry.text|safe }}
+        <li> <h2> {{ entry.title }} </h2> {{ entry.text|safe }} {{ entry.category }}
         <form action="{{ url_for('del_entry') }}" method="post" class="del_entry">
             <button value="delete" type="submit"> Delete </button>
             <input name="id" value="{{entry.id}}" type="hidden">
