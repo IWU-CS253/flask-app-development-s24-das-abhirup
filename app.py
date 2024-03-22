@@ -91,7 +91,8 @@ def del_entry():
     flash('New entry was successfully deleted')
     return redirect(url_for('show_entries'))
 
-@app.route('/filter_entires', methods=['GET'])
+
+@app.route('/filter_entries', methods=['GET'])
 def filter_entries():
     db = get_db()
     filter_category = request.args.get('category')
@@ -102,3 +103,19 @@ def filter_entries():
     else:
         entries = db.execute('SELECT * FROM entries WHERE category = ? ORDER BY id DESC', (filter_category,)).fetchall()
         return render_template('show_entries.html', entries=entries, category=category)
+
+
+@app.route('/update', methods=['POST'])
+def update_entry():
+    db = get_db()
+    db.execute("update entries set title = ?, category = ?, text = ?  where id = ? ",
+               [request.form['title'], request.form['category'], request.form['text'], request.form.get('id')])
+    db.commit()
+    flash('Entry was successfully updated', 'info')
+    return redirect(url_for('show_entries'))
+
+
+@app.route('/update-redirect', methods=['GET'])
+def update_redirect():
+    id = request.args.get("id")
+    return render_template('update.html', id=id)

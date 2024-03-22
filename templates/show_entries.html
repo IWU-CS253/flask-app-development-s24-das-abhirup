@@ -2,38 +2,110 @@
 
 {% block body %}
 
+<div style="margin-left: 10px">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+<script>
+function filter() {
+    let selCat = document.getElementById('categories').value;
+    let entries = document.querySelectorAll('.entry');
+
+    console.log("Selected category:", selCat); // Log the selected category to the console for debugging
+
+    entries.forEach(function(entry) {
+        let category = entry.getAttribute('data-category');
+        console.log("Entry category:", category); // Log the category of each entry to the console for debugging
+        if (selCat === "all_categories" || category === selCat) {
+            entry.classList.remove("hidden");
+        } else {
+            entry.classList.add("hidden");
+        }
+    });
+}
+</script>
+
 <form action="{{ url_for('add_entry') }}" method="post" class="add-entry">
-<dl>
-<dt>Title:
-<dd><input type="text" size="30" name="title">
-<dt>Category:
-<dd><input tupe="text" size="50" name="category">
-<dt>Text:
-<dd><textarea name="text" rows="5" cols="40"></textarea>
-<dd><input type="submit" value="Share">
-</dl>
+<div class="mb-3">
+    <label for="title" class="form-label">Title:</label>
+    <input type="text" class="form-control" id="title" name="title">
+</div>
+
+<div class="mb-3">
+    <label for="category" class="form-label">Category:</label>
+    <input type="text" class="form-control" id="category" name="category">
+</div>
+
+<div class="mb-3">
+    <label for="text" class="form-label">Text:</label>
+    <textarea class="form-control" id="text" name="text" rows="5"></textarea>
+</div>
+<button type="submit" class="btn btn-primary">Share</button>
 </form>
 
-<select id="categoryDropDown">
-<option value="all"> All Categories</option>
-<ul class="entries">
-{% for entry in entries %}
-    <option value="{{ entry.category }}"> {{ entry.category }}</option>
-{% endfor %}
-</ul>
-</select>
 
 <ul class="entries">
 {% for entry in entries %}
-<li> <h2> {{ entry.title }} </h2> {{ entry.category }} <br> {{ entry.text|safe }}
-<form action="{{ url_for('del_entry') }}" method="post" class="del_entry">
-<button value="delete" type="submit"> Delete </button>
-<input name="id" value="{{entry.id}}" type="hidden">
-</form>
-</li>
+    <div class="row g-3 align-items-center entry" style="margin-bottom: 10px" data-category="{{ entry.category }}">
+    <div class="col">
+        <div>{{ entry.title }}</div>
+    </div>
+    <div class="col">
+        <div>{{ entry.category }}</div>
+    </div>
+    <div class="col">
+        <div>{{ entry.text }}</div>
+    </div>
+
+    <div class="col">
+            <form action="{{ url_for('del_entry') }}" method="post">
+                <input type="hidden" name="id" value="{{ entry.id }}">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+    </div>
+
+    <div class="col">
+            <form action="{{ url_for('update_redirect') }}" method="get">
+                <input type="hidden" name="id" value="{{ entry.id }}">
+                <button type="submit" class="btn btn-primary">Edit</button>
+            </form>
+        </div>
+    </div>
+
 {% else %}
-<li><em> Unbelievable. No entries here so far. </em></li>
+    <div class="row">
+        <div class="col">
+            <p>Unbelievable. No entries here so far.</p>
+        </div>
+    </div>
 {% endfor %}
 </ul>
+
+<!-- Flash message alerts -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-info" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+</div>
+
+
+<!-- Not Part of the Current Assignment -->
+<form action="/filter_entries" method="GET">
+<div class="form-group">
+    <label for="category">Select a category</label>
+    <select class="form-control" name="category" id="category">
+    <option value="" disabled selected>Select a category</option>
+    <option value="all">All Categories</option>
+    {% for entry in entries %}
+        <option value="{{ entry.category }}">{{ entry.category }}</option>
+    {% endfor %}
+    </select>
+</div>
+<button type="submit" class="btn btn-primary">Filter</button>
+</form>
 
 {% endblock %}
